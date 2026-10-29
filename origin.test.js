@@ -1,3 +1,0 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {normalizeGateway} from './origin.js';
-test('permits a clean HTTPS gateway origin',()=>{assert.equal(normalizeGateway(' https://gateway.example:9443/ '),'https://gateway.example:9443')});
-test('rejects secrets, paths, insecure and loopback addresses',()=>{for(const url of ['http://gateway.example','https://name:pass@gateway.example','https://gateway.example/?token=x','https://gateway.example/#token','https://gateway.example/admin','https://localhost','https://demo.localhost','https://127.0.0.1','https://[::1]','not a url'])assert.throws(()=>normalizeGateway(url),url)});

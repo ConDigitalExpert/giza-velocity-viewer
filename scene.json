@@ -1,0 +1,450 @@
+{
+  "schema": 1,
+  "ready": true,
+  "version": "18784-web-review",
+  "built_at": "2026-10-29",
+  "source_label": "Giza harbour candidate 18731, packed copy 18734",
+  "source_sha256": "d51b166490ccf278019a516f99cadc06e1fdae66bb428c9e92cf4c296bf9b717",
+  "coordinates": "glTF Y-up metres; source Blender (x,y,z) maps to glTF (x,z,-y)",
+  "scope": "Web review snapshot of an illustrative Giza harbour, plateau and workyard. Terrain, water and materials are simplified; textures are capped at 512 px and water is a flat source-colour approximation. No accepted performers or historical survey are represented. Optional Landscape detail includes 60 source rocks and 1,728 sampled plants from 58,218 source plant instances; the remaining plants are omitted.",
+  "credits": "Copernicus WorldDEM-30 adapted terrain; Poly Haven CC0 materials; project-authored geometry. See Credits and data notices.",
+  "chunks": [
+    {
+      "id": "terrain",
+      "label": "Terrain",
+      "url": "assets/18784/core/terrain.glb",
+      "bytes": 1510940,
+      "sha256": "43923202ebba5824dd224ec2ad64d9a8d1ace3a34795ea7d9626456f7417bc2c",
+      "required": true
+    },
+    {
+      "id": "pyramids",
+      "label": "Pyramids",
+      "url": "assets/18784/core/pyramids.glb",
+      "bytes": 196832,
+      "sha256": "eff4551b520e4450ff1ad8a1516af339a9df04c7bd4e814d6ca21465d7a34fac",
+      "required": true
+    },
+    {
+      "id": "water",
+      "label": "Water",
+      "url": "assets/18784/core/water.glb",
+      "bytes": 253224,
+      "sha256": "2448eced399ccf27f339b12e77df9eac249196bc94d6fffbde87c1fc9fffe437",
+      "required": true
+    },
+    {
+      "id": "harbour",
+      "label": "Harbour",
+      "url": "assets/18784/core/harbour.glb",
+      "bytes": 1898844,
+      "sha256": "91f924b906b643383349a53262e62eb524b5565bf892bd5a4ca343637be7c542",
+      "required": true
+    },
+    {
+      "id": "workyard",
+      "label": "Workyard",
+      "url": "assets/18784/core/workyard.glb",
+      "bytes": 2151032,
+      "sha256": "b0f8331c00280b834f38a5d4d29d65d4faeaf219717317a30bb02190fe4b8421",
+      "required": true
+    },
+    {
+      "id": "service",
+      "label": "Service",
+      "url": "assets/18784/core/service.glb",
+      "bytes": 2376544,
+      "sha256": "6cddf5019b661c65ee18399f4bd3a29dfd37c95e1894418beb674498576a8936",
+      "required": true
+    },
+    {
+      "id": "rest",
+      "label": "Rest",
+      "url": "assets/18784/core/rest.glb",
+      "bytes": 1772788,
+      "sha256": "c1e492f6876974153dd19e4685b6ec67dc0e0a9fa08318dcd31b569411a77d70",
+      "required": true
+    },
+    {
+      "id": "storage",
+      "label": "Storage",
+      "url": "assets/18784/core/storage.glb",
+      "bytes": 959476,
+      "sha256": "5bbbf261d5b3782cbcea0d7e51a17b423bc8e6c4dba33e2033bd2a6726e8cc1a",
+      "required": true
+    },
+    {
+      "id": "maintenance",
+      "label": "Maintenance",
+      "url": "assets/18784/core/maintenance.glb",
+      "bytes": 531656,
+      "sha256": "b48c6f375e056cd1598b2f84ccd56af94448b631991004a8b4b669fdbe17bfac",
+      "required": true
+    },
+    {
+      "id": "environment",
+      "label": "Environment",
+      "url": "assets/18784/core/environment.glb",
+      "bytes": 312976,
+      "sha256": "5dee9a10b51cedbcdde769a6684cf0f0b06dbe3d87b98bedc37d881bef7c0454",
+      "required": true
+    },
+    {
+      "id": "landscape-00",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_00.glb",
+      "bytes": 10364,
+      "sha256": "60e3eef87cc947a5e5d194e4840c3bb3b1fbd4c981e2fa840a62c5bceac7a912",
+      "required": false
+    },
+    {
+      "id": "landscape-01",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_01.glb",
+      "bytes": 10164,
+      "sha256": "1c13575bcc3b8649d99dae1eb0dcddb2b2a8c5dc9409b6f611c077f1d3c80d10",
+      "required": false
+    },
+    {
+      "id": "landscape-02",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_02.glb",
+      "bytes": 9864,
+      "sha256": "b7a66ec426dffc38e421b86fe0c5ce9b8a983f8f06bc93ad2a691ab4eaed6b19",
+      "required": false
+    },
+    {
+      "id": "landscape-03",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_03.glb",
+      "bytes": 10584,
+      "sha256": "2a395e8a6ba6230bae963fa7418dd39c0f4c247014fff5731e7426a509c993ce",
+      "required": false
+    },
+    {
+      "id": "landscape-04",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_04.glb",
+      "bytes": 10724,
+      "sha256": "61bcc1e9bd562870c58bde75337cc7ae29307412015fd8122af860e71b87033e",
+      "required": false
+    },
+    {
+      "id": "landscape-05",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_05.glb",
+      "bytes": 9688,
+      "sha256": "d9fa85f298f0d45dbe70e064e916d26f01de3f04c31ff5cf494142e7aee0fed7",
+      "required": false
+    },
+    {
+      "id": "landscape-06",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_06.glb",
+      "bytes": 11372,
+      "sha256": "835245f6b3c0570aaf309c301ff977bf4eb8f2cfacce2c81bb2e39e7f96d1a92",
+      "required": false
+    },
+    {
+      "id": "landscape-07",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_07.glb",
+      "bytes": 11380,
+      "sha256": "feab42b07edd256bf29cb98a8497827e195a97e96ceea97776745e227aee3c6b",
+      "required": false
+    },
+    {
+      "id": "landscape-08",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_08.glb",
+      "bytes": 10840,
+      "sha256": "4c8976efb41eac32a67a751e4e0d8d3527db321bd150782ac6a62b8ee162c1d9",
+      "required": false
+    },
+    {
+      "id": "landscape-09",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_09.glb",
+      "bytes": 12428,
+      "sha256": "1915b165e06d062c54f5006b8ab9c1ec58b1063e9a0bc1f27ef143b056abff76",
+      "required": false
+    },
+    {
+      "id": "landscape-10",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_10.glb",
+      "bytes": 10824,
+      "sha256": "30bb94ff7ffdce443cb84f6dc02cfecbd2df3b87021b809c3f969a7e3d25a872",
+      "required": false
+    },
+    {
+      "id": "landscape-11",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_11.glb",
+      "bytes": 11624,
+      "sha256": "8c5951df891a723ac1de6711b9d62e2fabc5d288781cf0666bf863e686c27615",
+      "required": false
+    },
+    {
+      "id": "landscape-12",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_12.glb",
+      "bytes": 9972,
+      "sha256": "f95c92786071f43941344759b46714f43d49ae13637e3731c2bc1d150d87f3e1",
+      "required": false
+    },
+    {
+      "id": "landscape-13",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_13.glb",
+      "bytes": 11468,
+      "sha256": "acd3ed08b2bec1bd4419c0df9cc3d000d34efc45d2e082abe648eb9f8b21def9",
+      "required": false
+    },
+    {
+      "id": "landscape-14",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_14.glb",
+      "bytes": 10024,
+      "sha256": "7147ed5dbea8d12347c30d43c327804b7502ea9027581fc53918feb543a2c4dd",
+      "required": false
+    },
+    {
+      "id": "landscape-15",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_15.glb",
+      "bytes": 10012,
+      "sha256": "bc969a5e0a64c49925363cb046fc391a5e0b72975bf5163f460641fae1097e15",
+      "required": false
+    },
+    {
+      "id": "landscape-16",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_16.glb",
+      "bytes": 10380,
+      "sha256": "c8960e4ddeb240791371760eb98f8022072531f9fa134475773c5b2a7dec72c7",
+      "required": false
+    },
+    {
+      "id": "landscape-17",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_17.glb",
+      "bytes": 10264,
+      "sha256": "fb7ddca734a6eeb46351525836b861e3392100281e9cdc992fb2b552acffdb2e",
+      "required": false
+    },
+    {
+      "id": "landscape-18",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_18.glb",
+      "bytes": 607332,
+      "sha256": "5dc6dc2c710ae6475f926f538c3c6f7d3180fc86838bc63f97d202b5aaf099c9",
+      "required": false
+    },
+    {
+      "id": "landscape-19",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_19.glb",
+      "bytes": 621480,
+      "sha256": "43714f915d71429099a3cb815b8e1f870e1e9e6425f491eeda243b2d0880d89c",
+      "required": false
+    },
+    {
+      "id": "landscape-20",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_20.glb",
+      "bytes": 703192,
+      "sha256": "228260757601bc49346901525e0f026a706efbe98ddd3a166d647f9b01c9dd6a",
+      "required": false
+    },
+    {
+      "id": "landscape-21",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_21.glb",
+      "bytes": 713468,
+      "sha256": "4b29533ea0be3ed43622a301d2a4e72caa17f7ddb2594bceb7fe40064d52bf57",
+      "required": false
+    },
+    {
+      "id": "landscape-22",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_22.glb",
+      "bytes": 730556,
+      "sha256": "d76e039679f3dc19dc539a6d576bfaf14bebbbede5fe3530f8a9de18698a30d9",
+      "required": false
+    },
+    {
+      "id": "landscape-23",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_23.glb",
+      "bytes": 730300,
+      "sha256": "7c78545184057588486b32a8ae05480d0e07638d5a0406285674164ad1bc4947",
+      "required": false
+    },
+    {
+      "id": "landscape-24",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_24.glb",
+      "bytes": 549788,
+      "sha256": "4508dbf554df85a6c7563d4e851258431b7ff261c67ceb1bbef3ef22b0a4cd67",
+      "required": false
+    },
+    {
+      "id": "landscape-25",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_25.glb",
+      "bytes": 545632,
+      "sha256": "90704cf328ca9293203e975878698d4d0a89157627cad0f3f843c60c2000bf83",
+      "required": false
+    },
+    {
+      "id": "landscape-26",
+      "label": "Landscape detail",
+      "group": "landscape-detail",
+      "url": "assets/18784/instances/instances_26.glb",
+      "bytes": 647524,
+      "sha256": "081860e450a3637a9c8df04d46b4e592181a0f4f7d8f5676bf0eb8d64be5f1ed",
+      "required": false
+    }
+  ],
+  "bookmarks": [
+    {
+      "label": "Wide",
+      "position": [
+        639.2462158203125,
+        15.998754501342773,
+        -158.66079711914062
+      ],
+      "target": [
+        630.205078125,
+        16.293380737304688,
+        -154.39808654785156
+      ],
+      "fov_degrees": 46.39718102729637
+    },
+    {
+      "label": "River approach",
+      "position": [
+        1215.0,
+        16.200000762939453,
+        -447.0
+      ],
+      "target": [
+        1205.623046875,
+        16.61520767211914,
+        -443.55023193359375
+      ],
+      "fov_degrees": 25.989233583833013
+    },
+    {
+      "label": "Harbour",
+      "position": [
+        673.8551025390625,
+        15.617980003356934,
+        -121.99087524414062
+      ],
+      "target": [
+        664.6126098632812,
+        15.803967475891113,
+        -125.8042984008789
+      ],
+      "fov_degrees": 43.60281897270362
+    },
+    {
+      "label": "Workyard",
+      "position": [
+        639.0,
+        16.117107391357422,
+        -144.00001525878906
+      ],
+      "target": [
+        631.705322265625,
+        16.252548217773438,
+        -137.16122436523438
+      ],
+      "fov_degrees": 31.890791801845708
+    },
+    {
+      "label": "Rest courtyard",
+      "position": [
+        613.0,
+        16.898733139038086,
+        -163.3000030517578
+      ],
+      "target": [
+        603.0731201171875,
+        15.691408157348633,
+        -163.3000030517578
+      ],
+      "fov_degrees": 37.84928883210247
+    },
+    {
+      "label": "Service room",
+      "position": [
+        618.2999877929688,
+        17.22406005859375,
+        -140.4500274658203
+      ],
+      "target": [
+        610.5211181640625,
+        14.188409805297852,
+        -134.94786071777344
+      ],
+      "fov_degrees": 46.39718102729637
+    },
+    {
+      "label": "Close detail",
+      "position": [
+        623.0,
+        17.274059295654297,
+        -140.8000030517578
+      ],
+      "target": [
+        616.2960815429688,
+        14.980615615844727,
+        -147.8567657470703
+      ],
+      "fov_degrees": 29.862834356275105
+    },
+    {
+      "label": "Harbour approach",
+      "position": [
+        639.5,
+        16.56036376953125,
+        -142.00001525878906
+      ],
+      "target": [
+        631.8179321289062,
+        16.626007080078125,
+        -135.5983123779297
+      ],
+      "fov_degrees": 37.84928883210247
+    }
+  ]
+}

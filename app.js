@@ -1,31 +1,64 @@
-import { normalizeGateway } from './origin.js';
-const input=document.querySelector('#gateway'),form=document.querySelector('#gateway-form'),message=document.querySelector('#message'),frame=document.querySelector('#remote-viewer'),empty=document.querySelector('#empty'),state=document.querySelector('#viewer-state'),openTab=document.querySelector('#new-tab'),full=document.querySelector('#fullscreen'),viewer=document.querySelector('.viewer'),settings=document.querySelector('#settings'),settingsClose=document.querySelector('#settings-close'),setupTitle=document.querySelector('#setup-title');
-const key='giza-private-gateway-origin-v1';let active=null;
-function note(text,error=false){message.textContent=text;message.classList.toggle('error',error)}
-function settingsOpen(open){document.body.classList.toggle('settings-open',open);settings.setAttribute('aria-expanded',String(open));if(open)input.focus();}
-function connect(value){
- let origin;try{origin=normalizeGateway(value)}catch(error){note(error.message,true);return false}
- active=origin;input.value=origin;try{localStorage.setItem(key,origin)}catch{}
- frame.src=origin+'/';frame.hidden=false;empty.hidden=true;full.disabled=false;openTab.disabled=false;document.body.classList.add('configured');settings.hidden=false;setupTitle.textContent='Connection settings';settingsOpen(false);
- state.textContent='Opening private viewer';note('The gateway may request sign-in. If the embedded view is blocked, use Open in new tab.');return true;
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { validateManifest, safeDelta, pixelRatio } from './manifest.js?v=1814c4b2f6eff22e';
+const $=s=>document.querySelector(s),viewer=$('#viewer'),canvas=$('#scene'),overlay=$('#overlay'),title=$('#load-title'),detail=$('#load-detail'),status=$('#status'),info=$('#information');
+const camera=new THREE.PerspectiveCamera(45,1,.1,50000),scene=new THREE.Scene();scene.background=new THREE.Color(0x9eb6bd);
+let renderer,orbit,sun,frameRequested=false,lastTime=0,mode='orbit',snapshot,initial,sceneReady=false,drag=null;
+const held=new Set(),loaded=new Map(),manager=new THREE.LoadingManager(),loader=new GLTFLoader(manager),temp=new THREE.Vector3(),direction=new THREE.Vector3(),right=new THREE.Vector3(),up=new THREE.Vector3(0,1,0),euler=new THREE.Euler(0,0,0,'YXZ');
+const draco=new DRACOLoader(manager);draco.setDecoderPath(new URL('./vendor/three-0.186.1/addons/libs/draco/gltf/',import.meta.url).href);draco.setWorkerLimit(2);loader.setDRACOLoader(draco);
+window.__gizaStaticQA={renderCount:0,modelLoaded:false,mode:'orbit',lastRenderTime:0,chunks:[],assetErrors:0};manager.onError=()=>{window.__gizaStaticQA.assetErrors++;$('#asset-warning').hidden=false;$('#asset-warning').textContent='Some scene assets failed to load; textures or geometry may be incomplete.';say('Some scene assets failed to load; textures or geometry may be incomplete.')};
+function say(message){status.textContent=message}
+function invalidate(){if(!frameRequested&&!document.hidden){frameRequested=true;requestAnimationFrame(render)}}
+function applyFlight(dt){
+ if(!held.size)return;
+ const speed={detail:.6,yard:5,landscape:40}[$('#speed').value]||5;camera.getWorldDirection(direction);right.crossVectors(direction,up).normalize();temp.set(0,0,0);
+ if(held.has('forward'))temp.add(direction);if(held.has('back'))temp.sub(direction);if(held.has('right'))temp.add(right);if(held.has('left'))temp.sub(right);if(held.has('up'))temp.add(up);if(held.has('down'))temp.sub(up);
+ if(temp.lengthSq())camera.position.addScaledVector(temp.normalize(),speed*dt);
+ euler.setFromQuaternion(camera.quaternion);const turn=1.05*dt;if(held.has('yaw_left'))euler.y+=turn;if(held.has('yaw_right'))euler.y-=turn;if(held.has('pitch_up'))euler.x+=turn;if(held.has('pitch_down'))euler.x-=turn;euler.x=THREE.MathUtils.clamp(euler.x,-1.52,1.52);camera.quaternion.setFromEuler(euler);
 }
-form.addEventListener('submit',event=>{event.preventDefault();connect(input.value)});
-frame.addEventListener('load',()=>{if(active)state.textContent='Viewer requested · check its video status'});
-openTab.addEventListener('click',()=>{if(active)window.open(active+'/','_blank','noopener,noreferrer')});
-settings.addEventListener('click',async()=>{if(document.fullscreenElement){try{await document.exitFullscreen()}catch{note('Exit full screen to change connection settings.',true);return}}settingsOpen(true)});
-settingsClose.addEventListener('click',()=>{settingsOpen(false);settings.focus()});
-document.querySelector('#forget').addEventListener('click',()=>{try{localStorage.removeItem(key)}catch{}active=null;input.value='';frame.removeAttribute('src');frame.hidden=true;empty.hidden=false;full.disabled=true;openTab.disabled=true;settingsOpen(false);document.body.classList.remove('configured');settings.hidden=true;setupTitle.textContent='Connect your viewer';state.textContent='Not connected';note('The saved gateway address was removed from this browser.');input.focus()});
-full.addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await viewer.requestFullscreen()}catch{state.textContent='Full screen unavailable · use Open in new tab';note('Full screen is unavailable here. Use Open in new tab if needed.',true)}});
-document.addEventListener('fullscreenchange',()=>{full.textContent=document.fullscreenElement?'Exit full screen':'Full screen'});
-document.addEventListener('keydown',event=>{if(event.key==='Escape'&&document.body.classList.contains('settings-open')){settingsOpen(false);settings.focus()}});
-// A one-time handoff is explicit in the link. Remove the complete fragment even
-// when invalid, so accidental credentials are not retained in the address bar.
-const fragment=new URLSearchParams(window.location.hash.slice(1));
-if(fragment.has('gateway')){
- try{window.history.replaceState(null,'',window.location.pathname+window.location.search)}catch{}
- const gateways=fragment.getAll('gateway');
- if(gateways.length!==1||[...fragment.keys()].some(name=>name!=='gateway'))note('Invalid gateway handoff. Use one HTTPS origin without credentials.',true);
- else connect(gateways[0]);
-}else{
- try{const saved=localStorage.getItem(key);if(saved)connect(saved)}catch{}
+function render(time){frameRequested=false;if(document.hidden)return;const dt=lastTime?safeDelta((time-lastTime)/1000):0;lastTime=time;if(mode==='fly')applyFlight(dt);if(renderer.shadowMap.enabled){const anchor=mode==='orbit'?orbit.target:camera.position;sun.target.position.copy(anchor);sun.position.copy(anchor).add(new THREE.Vector3(45,80,30));sun.target.updateMatrixWorld()}renderer.render(scene,camera);window.__gizaStaticQA.renderCount++;window.__gizaStaticQA.lastRenderTime=time;const pos=camera.position.toArray().map(x=>+x.toFixed(2)),forward=camera.getWorldDirection(new THREE.Vector3()).toArray().map(x=>+x.toFixed(3));window.__gizaStaticQA.position=pos;window.__gizaStaticQA.forward=forward;$('#camera-stat').textContent=`Camera: ${pos.join(', ')} · forward: ${forward.join(', ')}`;$('#render-stat').textContent=`Frames rendered: ${window.__gizaStaticQA.renderCount}`;if(held.size&&mode==='fly')invalidate();else lastTime=0}
+function resize(){if(!renderer)return;const w=viewer.clientWidth,h=viewer.clientHeight;if(!w||!h)return;renderer.setPixelRatio(pixelRatio(window.devicePixelRatio,$('#quality').value));renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();invalidate()}
+function setMode(next){mode=next;window.__gizaStaticQA.mode=next;held.clear();orbit.enabled=next==='orbit';$('#orbit').setAttribute('aria-pressed',String(next==='orbit'));$('#fly').setAttribute('aria-pressed',String(next==='fly'));$('#flight').hidden=next!=='fly';$('#instructions').textContent=next==='orbit'?'Drag to orbit. On touch, use one finger to orbit and two fingers to pan or zoom.':'Click the scene, then use WASD, Q/E and arrow keys; drag to look. Hold the visible controls on touch.';$('#hint').textContent=next==='orbit'?'Orbit: drag · zoom: scroll or pinch':'Fly: drag to look · WASD to move';if(next==='orbit'){camera.getWorldDirection(direction);orbit.target.copy(camera.position).addScaledVector(direction,initial?.orbitDistance||15);orbit.update()}invalidate()}
+function applyView(b){camera.fov=Number.isFinite(b.fov_degrees)?b.fov_degrees:45;camera.updateProjectionMatrix();camera.position.fromArray(b.position);orbit.target.fromArray(b.target);camera.lookAt(orbit.target);orbit.update();invalidate();say(`View: ${b.label}`)}
+async function loadChunk(chunk){
+ if(loaded.has(chunk.id))return;
+ const gltf=await loader.loadAsync(chunk.absoluteURL);scene.add(gltf.scene);loaded.set(chunk.id,gltf.scene);if(renderer?.shadowMap.enabled)gltf.scene.traverse(x=>{if(x.isMesh){x.castShadow=true;x.receiveShadow=true}});window.__gizaStaticQA.chunks=[...loaded.keys()];invalidate();
 }
+function addDetails(data){
+ const dl=$('#metadata');dl.replaceChildren();for(const [label,value] of [['Version',data.version],['Built',data.built_at],['Source',data.source_label],['Source SHA-256',data.source_sha256],['Coordinates',data.coordinates]])if(value){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent=label;dd.textContent=String(value);dl.append(dt,dd)}
+ for(const chunk of data.chunks){const dt=document.createElement('dt'),dd=document.createElement('dd');dt.textContent='Asset '+chunk.id+' SHA-256';dd.textContent=chunk.sha256;dl.append(dt,dd)}
+ $('#scope').textContent=data.scope||'This is an illustrative work in progress.';$('#credits').textContent=data.credits||'';
+}
+async function start(){
+ try{
+  const response=await fetch(new URL('./scene.json?v=1814c4b2f6eff22e',import.meta.url),{cache:'no-store'});if(!response.ok)throw Error('Snapshot manifest is unavailable.');
+  snapshot=validateManifest(await response.json(),new URL('./scene.json?v=1814c4b2f6eff22e',import.meta.url));
+  if(!snapshot.ready){title.textContent='Scene not available yet';detail.textContent=snapshot.message;return}
+  try{renderer=new THREE.WebGLRenderer({canvas,antialias:false,alpha:false,powerPreference:'default'})}catch{throw Error('This device could not start WebGL 2. Try a supported browser or another device.')}
+  renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1;
+  orbit=new OrbitControls(camera,canvas);orbit.enableDamping=false;orbit.addEventListener('change',invalidate);
+  const hemi=new THREE.HemisphereLight(0xeaf1f2,0x90765a,2.0);scene.add(hemi);sun=new THREE.DirectionalLight(0xffefce,2.2);sun.position.set(600,900,350);sun.shadow.mapSize.set(1024,1024);sun.shadow.bias=-.0002;sun.shadow.normalBias=.05;Object.assign(sun.shadow.camera,{left:-35,right:35,top:35,bottom:-35,near:.5,far:250});sun.shadow.camera.updateProjectionMatrix();scene.add(sun,sun.target);
+  addDetails(snapshot);$('#version').textContent=`${snapshot.version}${snapshot.built_at?' · '+snapshot.built_at.slice(0,10):''}`;
+  const required=snapshot.chunks.filter(x=>x.required),bytes=required.reduce((n,x)=>n+x.bytes,0);title.textContent='Loading the saved scene';detail.textContent=`${required.length} asset${required.length===1?'':'s'} · ${(bytes/1048576).toFixed(1)} MiB`;
+  for(let i=0;i<required.length;i++){await loadChunk(required[i]);detail.textContent=`Loaded ${i+1} of ${required.length} scene assets`}
+  const bounds=new THREE.Box3().setFromObject(scene);if(bounds.isEmpty())throw Error('The scene file contains no visible geometry.');
+  const size=bounds.getSize(new THREE.Vector3()),center=bounds.getCenter(new THREE.Vector3());const dist=Math.max(size.x,size.y,size.z)*.7||10;
+  initial=snapshot.bookmarks[0]||{label:'Overview',position:[center.x+dist,center.y+dist*.5,center.z+dist],target:center.toArray()};initial={...initial,orbitDistance:Math.max(3,dist/4)};
+  for(const b of snapshot.bookmarks){const btn=document.createElement('button');btn.type='button';btn.textContent=b.label;btn.addEventListener('click',()=>applyView(b));$('#bookmarks').append(btn)}
+  const groups=new Map();for(const chunk of snapshot.chunks.filter(x=>!x.required)){const group=chunk.group||chunk.id;if(!groups.has(group))groups.set(group,[]);groups.get(group).push(chunk)}for(const chunks of groups.values()){const label=chunks[0].label||'Landscape detail',btn=document.createElement('button');btn.type='button';btn.textContent=`Load ${label.toLowerCase()}`;btn.addEventListener('click',async()=>{btn.disabled=true;try{for(let i=0;i<chunks.length;i++){say(`Loading ${label.toLowerCase()} · ${i+1} of ${chunks.length}…`);await loadChunk(chunks[i])}btn.textContent=`${label} loaded`;say('Additional scene detail loaded.')}catch{btn.disabled=false;say('Additional detail could not be loaded; select it to retry.')}});$('#extras').append(btn)}
+  sceneReady=true;window.__gizaStaticQA.modelLoaded=true;window.__gizaStaticQA.version=snapshot.version;$('#orbit').disabled=false;$('#fly').disabled=false;$('#reset').disabled=false;overlay.hidden=true;applyView(initial);resize();say(window.__gizaStaticQA.assetErrors?'Scene loaded with missing assets; textures or geometry may be incomplete.':'Static snapshot ready. Use the viewpoints or explore freely.');
+ }catch(error){title.textContent='Scene unavailable';detail.textContent=error instanceof Error?error.message:'Could not load the scene.';say('The snapshot could not be loaded.');}
+}
+$('#orbit').addEventListener('click',()=>sceneReady&&setMode('orbit'));$('#fly').addEventListener('click',()=>sceneReady&&setMode('fly'));$('#reset').addEventListener('click',()=>sceneReady&&applyView(initial));$('#quality').addEventListener('change',()=>{const detailed=$('#quality').value==='high';$('#shadows-option').hidden=!detailed;if(!detailed){$('#shadows').checked=false;setShadows(false)}resize()});
+function setShadows(enabled){if(!renderer||!sun)return;renderer.shadowMap.enabled=enabled;sun.castShadow=enabled;for(const object of loaded.values())object.traverse(x=>{if(x.isMesh){x.castShadow=enabled;x.receiveShadow=enabled}});invalidate()}
+$('#shadows').addEventListener('change',event=>setShadows(event.target.checked));
+$('#info-toggle').addEventListener('click',()=>{info.hidden=!info.hidden;$('#info-toggle').setAttribute('aria-expanded',String(!info.hidden))});$('#info-close').addEventListener('click',()=>{info.hidden=true;$('#info-toggle').setAttribute('aria-expanded','false');$('#info-toggle').focus()});
+$('#fullscreen').addEventListener('click',async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await document.querySelector('main').requestFullscreen()}catch{document.body.classList.toggle('expanded')}$('#fullscreen').textContent=(document.fullscreenElement||document.body.classList.contains('expanded'))?'Exit full screen':'Full screen';resize()});document.addEventListener('fullscreenchange',()=>{$('#fullscreen').textContent=document.fullscreenElement?'Exit full screen':'Full screen';resize()});
+const keymap={w:'forward',s:'back',a:'left',d:'right',q:'down',e:'up',ArrowLeft:'yaw_left',ArrowRight:'yaw_right',ArrowUp:'pitch_up',ArrowDown:'pitch_down'};
+canvas.addEventListener('keydown',event=>{if(mode!=='fly')return;const action=keymap[event.key]||keymap[event.key.toLowerCase()];if(action){event.preventDefault();held.add(action);invalidate()}});
+window.addEventListener('keyup',event=>{const action=keymap[event.key]||keymap[event.key.toLowerCase()];if(action)held.delete(action)});window.addEventListener('blur',()=>held.clear());document.addEventListener('visibilitychange',()=>{if(document.hidden){held.clear();lastTime=0}else invalidate()});
+for(const b of document.querySelectorAll('[data-move]')){const end=()=>{held.delete(b.dataset.move)};b.addEventListener('pointerdown',event=>{event.preventDefault();b.setPointerCapture(event.pointerId);held.add(b.dataset.move);invalidate()});for(const evt of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(evt,end);b.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();held.add(b.dataset.move);invalidate()}});b.addEventListener('keyup',end)}
+canvas.addEventListener('pointerdown',event=>{canvas.focus({preventScroll:true});if(mode==='fly'){drag={x:event.clientX,y:event.clientY};canvas.setPointerCapture(event.pointerId)}});canvas.addEventListener('pointermove',event=>{if(mode!=='fly'||!drag)return;euler.setFromQuaternion(camera.quaternion);euler.y-=(event.clientX-drag.x)*.004;euler.x=THREE.MathUtils.clamp(euler.x-(event.clientY-drag.y)*.004,-1.52,1.52);camera.quaternion.setFromEuler(euler);drag={x:event.clientX,y:event.clientY};invalidate()});for(const evt of ['pointerup','pointercancel','lostpointercapture'])canvas.addEventListener(evt,()=>{drag=null});
+canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();overlay.hidden=false;title.textContent='Graphics context lost';detail.textContent='Reload the page to restore the scene.';held.clear()});new ResizeObserver(resize).observe(viewer);start();

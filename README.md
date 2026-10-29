@@ -1,16 +1,26 @@
-# Giza Pages shell
+# Explore Giza
 
-This folder is a static, dependency-free shell for an HTTPS GitHub Pages site. It contains **no 3D scene, NVIDIA streaming client bundle, gateway URL, credentials, user data or research files**. It does not itself render or stream Giza. The viewer and all 3D rendering continue to run on Velocity through an independently configured HTTPS gateway.
+[Open the navigable snapshot](https://condigitalexpert.github.io/giza-velocity-viewer/).
 
-The visitor can enter an authorized HTTPS **origin** (no path, credentials, query or fragment) or open a private handoff link ending in `#gateway=` followed by that origin in percent-encoded form. A single validated origin is stored in browser local storage and loaded in a sandboxed cross-origin iframe; the handoff fragment is removed from the address bar even when invalid. On return, the saved validated origin opens automatically, and Forget clears it. No token or credential belongs in a handoff link. “Open in new tab” is a fallback if the gateway's authentication or browser third-party-cookie policy blocks embedding. Full-screen viewing is available when the browser allows it. The iframe's own viewer is responsible for login, session controls, navigation and playback status; this shell cannot verify cross-origin video playback.
+A static progress review of a developing Khufu-era Giza production environment. The viewer and versioned scene assets are hosted by GitHub Pages. Opening the site requires no Velocity server, GPU reservation, Tailscale, Mac relay, sign-in or local server.
 
-## Required before publication can satisfy navigation
+The viewing device draws the 3D scene with WebGL 2. Rendering runs only during interaction, loading, resizing or view changes and pauses when the tab is hidden. This reduces idle work; it does not make interactive 3D display free of device graphics or memory use.
 
-1. Establish and test a private, browser-reachable HTTPS gateway and media path. There is no such endpoint in this bundle; the existing loopback-only Mac gateway is not a remotely reachable backend. Keep the renderer on Velocity and do not expose private files or embed session credentials in the public site.
-2. Authenticate the viewer independently. If embedding, configure the private viewer's response CSP `frame-ancestors` to include **the exact published Pages origin**, and test authentication, cookie behavior and iframe sandbox compatibility in the intended browsers. Existing `frame-ancestors 'none'` intentionally prevents embedding. A new-tab fallback alone does not establish successful embedded playback.
-3. Preserve secure same-origin semantics between the private viewer and its own control, signaling and session endpoints. Confirm WebRTC media/ICE connectivity end to end; a reachable page or successful signaling does not demonstrate decoded video or camera control. Cross-origin access should not use wildcard authenticated CORS.
-4. Publish only this folder's generic shell, after the repository destination and access policies are resolved. Avoid copying the private Giza scene, evidence, user-specific configuration, proprietary client bundles or credentials into the public repository.
+## Explore
 
-The prior local client bundle carries the separate `NVIDIA_CLIENT_LICENSE.txt` in the private navigation directory and must not be redistributed based merely on its availability. This shell includes no NVIDIA code or packages.
+- Drag to orbit; scroll or pinch to zoom. Use saved viewpoints to reach the workyard and related areas.
+- Select **Fly**, click the scene, then use WASD to move, Q/E to change height and arrow keys to look. Visible buttons support touch interaction. Flight has no collision detection.
+- Select **Light** for lower display resolution. Extra detail may load separately.
+- **About** shows the saved version, provenance, limitations and resource diagnostics. **Credits and data notices** records source obligations.
 
-Run `npm test` in this folder for URL-validation tests; it uses Node's built-in test runner and installs no dependencies. A live remote gateway, embed, browser playback and navigation are not yet verified for the Pages route.
+This is an optimized web review copy. It is not the complete historical area, an archaeological survey, final cinematic rendering, or an accepted living population. It contains illustrative reconstruction and material simplifications. Full-quality authoring and film renders remain separate from this site.
+
+## Versioning and publishing
+
+`scene.json` identifies the current snapshot with exact asset sizes and SHA-256 hashes. Scene files live under immutable `assets/<version>/` paths. New work is exported and optimized in bounded remote jobs, checked against source usage rights, reviewed in the browser and then published here. Merely saving the authoring scene does not automatically update this site. Prior released snapshots should remain available while storage limits permit; git history records source changes.
+
+Only public viewer code, cleared derivatives and required notices belong in this repository. Do not add private research, credentials, server state or proprietary streaming clients. This repository is public.
+
+Three.js is MIT-licensed; the pinned Draco decoder carries its accompanying Apache licence. Those software licences do not make the complete mixed scene CC0. Consult [credits](https://condigitalexpert.github.io/giza-velocity-viewer/credits.html) for terrain and asset conditions.
+
+GitHub Pages currently limits published sites to 1 GB with a soft 100 GB/month bandwidth limit. This is a progress-review delivery channel, not unlimited full-resolution production storage. [GitHub Pages limits](https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits).
