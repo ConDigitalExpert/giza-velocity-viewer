@@ -1,0 +1,1 @@
+{"name":"giza-static-shell","private":true,"type":"module","scripts":{"test":"node --test origin.test.js app.test.js"}}
